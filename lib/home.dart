@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:Wyther/login.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong/latlong.dart';
 
 class HomePage extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,12 +44,44 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 2,
-        padding: EdgeInsets.all(16.0),
-        childAspectRatio: 8.0 / 9.0,
-        children: _buildGridCards(10),
+      body: new FlutterMap(
+        options: MapOptions(
+          center: new LatLng(-23.31656,-51.17082), 
+          minZoom: 5.0,
+        ),
+        layers: [
+          new TileLayerOptions(
+            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            subdomains: ['a', 'b', 'c'],
+
+            
+          ),
+          new MarkerLayerOptions(markers: [
+            new Marker(
+              width: 45.0,
+              height: 45.0,
+              point: LatLng(-23.31656,-51.17082),
+              builder: (context) => new Container(
+                child: new IconButton(
+                  icon: Icon(Icons.local_library),
+                  color: Colors.red,
+                  iconSize: 45.0,
+                  onPressed: (){
+
+                  },
+                ),
+              )
+            )]
+          )     
+        ],
       ),
+      
+      // GridView.count(
+      //   crossAxisCount: 2,
+      //   padding: EdgeInsets.all(16.0),
+      //   childAspectRatio: 8.0 / 9.0,
+      //   children: _buildGridCards(10),
+      // ),
     );
   }
 

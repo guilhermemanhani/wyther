@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Wyther/register.dart';
+import 'package:Wyther/login/email.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -40,6 +41,19 @@ class _LoginPageState extends State<LoginPage> {
               color: Colors.blue,              
               onPressed: () {
                 Navigator.pop(context);
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Acessar com e-mail',
+                style: TextStyle(),
+              ),
+              color: Colors.blue,              
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EmailLoginPage())
+                );
               },
             ),
             // [Name]

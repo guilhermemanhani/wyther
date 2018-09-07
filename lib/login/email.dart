@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class RegisterPage extends StatefulWidget {
+class EmailLoginPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _EmailLoginPageState createState() => _EmailLoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _EmailLoginPageState extends State<EmailLoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _emailController = TextEditingController();
@@ -18,7 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cadastrar'),
+        title: Text('Acessar com e-mail'),
       ),
       body: SafeArea(
           minimum: EdgeInsets.all(15.0),
@@ -62,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       alignment: MainAxisAlignment.center,
                       children: <Widget>[
                         RaisedButton(
-                          child: Text('CADASTRAR'),
+                          child: Text('ACESSAR'),
                           color: Colors.blue,
                           textColor: Colors.white,
                           onPressed: () async {
@@ -70,44 +70,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               _formKey.currentState.save();
 
                               try {
-                                FirebaseUser user = await FirebaseAuth.instance
-                                    .createUserWithEmailAndPassword(
+                                FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(
                                         email: _email.trim(), password: _password);
 
                                 if (user != null) {
-                                  AlertDialog dialog = new AlertDialog(
-                                    title: new Center(child: Text('Cadastro realizado!'),),
-                                    content: new SingleChildScrollView(
-                                      child: new ListBody(
-                                        children: <Widget>[
-                                          new Icon(
-                                              Icons.check,
-                                              semanticLabel: 'menu',
-                                              color: Colors.green,        
-                                              size: 52.0,                                      
-                                            ),                                          
-                                          new Text(
-                                              'Cadastro realizado com sucesso! Você receberá um email para confirmação.',
-                                              style: TextStyle(
-                                                fontSize: 14.0,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      new FlatButton(
-                                        child: new Text('Ok',
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                        ),),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                  showDialog(context: context, child: dialog);
+                                  Navigator.of(context).pop();
                                 }
                               } catch (e) {
                                 print(e);
