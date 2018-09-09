@@ -1,7 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Wyther/register.dart';
-import 'package:Wyther/login/email.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -36,78 +35,35 @@ class _LoginPageState extends State<LoginPage> {
             RaisedButton(
               child: Text(
                 'Acessar com Facebook',
-                style: TextStyle(),
+                style: TextStyle(color: Colors.white),
               ),
-              color: Colors.blue,              
+              color: Colors.blueGrey,
               onPressed: () {
-                Navigator.pop(context);
-              },
+
+              }
             ),
             RaisedButton(
               child: Text(
                 'Acessar com e-mail',
-                style: TextStyle(),
+                style: TextStyle(color: Colors.white),
               ),
-              color: Colors.blue,              
+              color: Colors.blue,
+              onPressed: () {
+                Navigator.pushNamed(context, '/email');
+              },
+            ),
+            FlatButton(
+              child: Text('Cadastrar-se.'),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EmailLoginPage())
+                  MaterialPageRoute(builder: (context) => RegisterPage()),
                 );
               },
             ),
-            // [Name]
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                filled: true,
-                labelText: 'E-mail',
-              ),
-            ),
-            // spacer
-            SizedBox(height: 12.0),
-            // [Password]
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                filled: true,
-                labelText: 'Senha',
-              ),
-              obscureText: true,
-            ),
-            // TODO: Add buttons (101)
-            ButtonBar(
-              // TODO: Add a beveled rectangular border to CANCEL (103)
-              children: <Widget>[
-                // TODO: Add buttons (101)
-                FlatButton(
-                  child: Text('CANCELAR'),
-                  onPressed: () {
-                    _usernameController.clear();
-                    _passwordController.clear();
-                  },
-                ),
-                RaisedButton(
-                  child: Text('ACESSAR'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-            FlatButton(
-                  child: Text('Cadastrar-se.'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RegisterPage()),
-                      );
-                  },
-                ),
           ],
         ),
       ),
     );
   }
 }
-

@@ -4,24 +4,41 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 
 class HomePage extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            semanticLabel: 'menu',
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
-            );
-            print('Menu button');
-          },
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            AppBar(
+              automaticallyImplyLeading: false,
+              title: Text('Choose'),
+            ),
+            ListTile(
+              title: Text('Pontos de alagamento'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Sobre'),
+              onTap: () {},
+            )
+          ],
         ),
+      ),
+      appBar: AppBar(
+        // leading: IconButton(
+        //   icon: Icon(
+        //     Icons.arrow_back,
+        //     semanticLabel: 'menu',
+        //   ),
+        //   onPressed: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (context) => LoginPage()),
+        //     );
+        //     print('Menu button');
+        //   },
+        // ),
         title: Text('Wyther'),
         actions: <Widget>[
           IconButton(
@@ -44,38 +61,56 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add_location,
+          semanticLabel: 'menu',
+          color: Colors.white,
+          size: 36.0,          
+        ),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+             return new Column(
+              children: <Widget>[
+                Text('Reportar alagamento',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold
+                ),)
+              ],
+            );
+          }  
+        ); 
+      },
+      ),
       body: new FlutterMap(
         options: MapOptions(
-          center: new LatLng(-23.31656,-51.17082), 
+          center: new LatLng(-23.31656, -51.17082),
           minZoom: 5.0,
         ),
         layers: [
           new TileLayerOptions(
             urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             subdomains: ['a', 'b', 'c'],
-
-            
           ),
           new MarkerLayerOptions(markers: [
             new Marker(
-              width: 45.0,
-              height: 45.0,
-              point: LatLng(-23.31656,-51.17082),
-              builder: (context) => new Container(
-                child: new IconButton(
-                  icon: Icon(Icons.local_library),
-                  color: Colors.red,
-                  iconSize: 45.0,
-                  onPressed: (){
-
-                  },
-                ),
-              )
-            )]
-          )     
+                width: 45.0,
+                height: 45.0,
+                point: LatLng(-23.31656, -51.17082),
+                builder: (context) => new Container(
+                      child: new IconButton(
+                        icon: Icon(Icons.local_library),
+                        color: Colors.red,
+                        iconSize: 45.0,
+                        onPressed: () {},
+                      ),
+                    ))
+          ])
         ],
       ),
-      
+
       // GridView.count(
       //   crossAxisCount: 2,
       //   padding: EdgeInsets.all(16.0),

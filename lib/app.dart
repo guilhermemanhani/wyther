@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:Wyther/home.dart';
 import 'package:Wyther/login.dart';
-import 'package:Wyther/route.dart';
+import 'package:Wyther/login/email.dart';
+
 
 // TODO: Convert ShrineApp to stateful widget (104)
 class WytherApp extends StatelessWidget {
@@ -11,15 +12,18 @@ class WytherApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Wyther',
-      // TODO: Change home: to a Backdrop with a HomePage frontLayer (104)
-      home: HomePage(),
-      // TODO: Make currentCategory field take _currentCategory (104)
-      // TODO: Pass _currentCategory for frontLayer (104)
-      // TODO: Change backLayer field value to CategoryMenuPage (104)
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),      
+      // home: HomePage(),
+      routes: {
+        '/': (BuildContext context) => LoginPage(),
+        '/home': (BuildContext context) => HomePage(),
+        '/email': (BuildContext context) => EmailLoginPage(),
+      },
       initialRoute: '/login',
       onGenerateRoute: _getRoute,
-      // routes: routes,
-      // TODO: Add a theme (103)
+      
     );
   }
 
