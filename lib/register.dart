@@ -1,8 +1,6 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:scoped_model/scoped_model.dart';
+import 'package:Wyther/scope-models/main.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -17,39 +15,12 @@ class _RegisterPageState extends State<RegisterPage> {
   String _email;
   String _password;
 
-  Future<Map<String, dynamic>> _register(String email, String password) async {
-    final Map<String, dynamic> authData = {
-      'email': email,
-      'password': password,
-      'returnSecureToken': true
-    };
-    http.Response response;
-    response = await http.post(
-      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCRoUw6Ya8D-JJJCx3IVuShFJD9ozU9Ad8',
-      body: json.encode(authData),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    final Map<String, dynamic> responseData = json.decode(response.body);
-    bool hasError = true;
-    String message = 'Ops, alguma coisa deu errado!';
-    print(responseData);
-    if (responseData.containsKey('idToken')) {
-      hasError = false;
-      message = 'Cadastro realizado com sucesso!';
-    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
-      message = 'Este e-mail já esta cadastrado em nossa base de dados.';
-    } else if (responseData['error']['message'] ==
-        'TOO_MANY_ATTEMPTS_TRY_LATER') {
-      message =
-          'Desculpe, devido ao excesso de tentativas você foi bloquado. Tente mais tarde.';
-    }
-    return {'success': !hasError, 'message': message};
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, MainModel model){
+        return Scaffold(
       appBar: AppBar(
         title: Text('Cadastrar'),
       ),
@@ -95,7 +66,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       alignment: MainAxisAlignment.center,
                       children: <Widget>[
                         RaisedButton(
-                          child: Text('CADASTRAR'),
+                          child: model.isLoading ? Center(child: CircularProgressIndicator(
+                                    strokeWidth: 3.0, valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))) : Text('CADASTRAR'),
                           color: Colors.blue,
                           textColor: Colors.white,
                           onPressed: () async {
@@ -104,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                               try {
                                 final Map<String, dynamic> response =
-                                    await _register(_email, _password);
+                                    await model.register(_email, _password);
 
                                 if (response['success']) {
                                   showDialog(
@@ -199,6 +171,8 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ],
           )),
-    );
-  }
+    );  
+  });
+}
+
 }
