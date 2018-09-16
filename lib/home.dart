@@ -1,8 +1,41 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:location/location.dart' as geoloc;
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+
+  @override
+  _HomePageState createState() => new _HomePageState();
+
+}
+
+class _HomePageState extends State<HomePage>{
+  Map <String, double> _currentLocation;
+
+  void _getCurrentLocation() async {
+
+    final location = new geoloc.Location();
+
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      final currentLocation = await location.getLocation();
+      _currentLocation = currentLocation;
+      print(_currentLocation);
+    } on Exception catch (e) {
+      print('Could not describe object: $e');
+    }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _getCurrentLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +94,7 @@ class HomePage extends StatelessWidget {
       ),
       body: new FlutterMap(
         options: MapOptions(
-          center: new LatLng(-23.31656, -51.17082),
+          center: _currentLocation != null ? new LatLng(_currentLocation['latitude'], _currentLocation['longitude']):LatLng(-23.31656, -51.17082),
           zoom: 13.0,
         ),
         layers: [
@@ -76,10 +109,12 @@ class HomePage extends StatelessWidget {
                 point: LatLng(-23.31656, -51.17082),
                 builder: (context) => new Container(
                       child: new IconButton(
-                        icon: Icon(Icons.near_me),
-                        color: Colors.red,
+                        icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
+                        color: Colors.blue,
                         iconSize: 45.0,
-                        onPressed: () {},
+                        onPressed: () {
+                          print('click no ponto!');
+                        },
                       ),
                     ))
           ])
