@@ -32,16 +32,16 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             SizedBox(height: 20.0),
-            RaisedButton(
-              child: Text(
-                'Acessar com Facebook',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Colors.blueGrey,
-              onPressed: () {
+            // RaisedButton(
+            //   child: Text(
+            //     'Acessar com Facebook',
+            //     style: TextStyle(color: Colors.white),
+            //   ),
+            //   color: Colors.blueGrey,
+            //   onPressed: () {
 
-              }
-            ),
+            //   }
+            // ),
             RaisedButton(
               child: Text(
                 'Acessar com e-mail',

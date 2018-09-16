@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:Wyther/login.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 
@@ -21,44 +20,20 @@ class HomePage extends StatelessWidget {
             ListTile(
               title: Text('Sobre'),
               onTap: () {},
+            ),
+            ListTile(
+              title: Text('Sair'),
+              onTap: () {
+                Navigator.pop(context);
+              },
             )
           ],
         ),
       ),
       appBar: AppBar(
-        // leading: IconButton(
-        //   icon: Icon(
-        //     Icons.arrow_back,
-        //     semanticLabel: 'menu',
-        //   ),
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => LoginPage()),
-        //     );
-        //     print('Menu button');
-        //   },
-        // ),
         title: Text('Wyther'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              semanticLabel: 'search',
-            ),
-            onPressed: () {
-              print('search button');
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.tune,
-              semanticLabel: 'filter',
-            ),
-            onPressed: () {
-              print('filter button');
-            },
-          )
+          
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -66,7 +41,7 @@ class HomePage extends StatelessWidget {
           Icons.add_location,
           semanticLabel: 'menu',
           color: Colors.white,
-          size: 36.0,          
+          size: 36.0,
         ),
         onPressed: () {
           showModalBottomSheet(
@@ -87,7 +62,7 @@ class HomePage extends StatelessWidget {
       body: new FlutterMap(
         options: MapOptions(
           center: new LatLng(-23.31656, -51.17082),
-          minZoom: 5.0,
+          zoom: 13.0,
         ),
         layers: [
           new TileLayerOptions(
@@ -101,7 +76,7 @@ class HomePage extends StatelessWidget {
                 point: LatLng(-23.31656, -51.17082),
                 builder: (context) => new Container(
                       child: new IconButton(
-                        icon: Icon(Icons.local_library),
+                        icon: Icon(Icons.near_me),
                         color: Colors.red,
                         iconSize: 45.0,
                         onPressed: () {},
