@@ -4,14 +4,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:Wyther/model/user.dart';
+import 'package:Wyther/model/incidente.dart';
 
 class ConnectedModel extends Model {
+  List<Incidente> _incidentes;
   bool _isLoading = false;
   User _authUser;
 
 }
 
 class UserModel extends ConnectedModel {
+
+  String get userId {
+    return _authUser.id;
+  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     _isLoading = true;
@@ -82,6 +88,122 @@ class UserModel extends ConnectedModel {
     notifyListeners();
     return {'success': !hasError, 'message': message};
   }
+
+}
+
+class IncidentesModel extends ConnectedModel {
+
+  List<Incidente> get incidentes {
+    return _incidentes;
+  }
+
+  Future<bool> fetch() async {
+    _isLoading = true;
+    notifyListeners();
+
+    final List<Incidente> fetchedIncidentList = [];
+
+    fetchedIncidentList.add(new Incidente(descricao: 'blah1', latitute: -23.31656, longitude: -51.17082, userId: 'user1'));
+    fetchedIncidentList.add(new Incidente(descricao: 'blah2', latitute: -23.31650, longitude: -51.17082, userId: 'user3'));
+    fetchedIncidentList.add(new Incidente(descricao: 'blah3', latitute: -23.31550, longitude: -51.17082, userId: 'user2'));
+
+    _incidentes = fetchedIncidentList;
+    
+    return true;
+
+    try {
+
+      http.Response response;
+      response = await http.get(
+        'https://wyther-app.firebaseio.com/incidentes.json?auth=${_authUser.token}',        
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        print('#error: IncidentesModel@fetch - status code');
+        print('#error: {error}');
+        return false;
+      }
+
+      final List<Incidente> fetchedIncidentList = [];
+      final Map<String, dynamic> incidenteListData = json.decode(response.body);
+      if (incidenteListData == null) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      incidenteListData.forEach((String productId, dynamic productData) {
+        final Incidente incidente = Incidente(
+            descricao: productData['descricao'],
+            latitute: productData['latitute'],
+            longitude: productData['longitude'],
+            userId: productData['userId']);
+        fetchedIncidentList.add(incidente);
+      });
+
+      _incidentes = fetchedIncidentList;
+      _isLoading = false;
+      notifyListeners();
+      return true;
+
+    } catch (error) {
+      print('#error: IncidentesModel@fetch - catch');
+      print(error);
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> store(Incidente incidente) async {
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> data = {
+      'descricao': incidente.descricao,
+      'latitude': incidente.latitute,
+      'longitude': incidente.longitude,
+      'userId': _authUser.id,
+      'returnSecureToken': true
+    };
+
+    try {
+
+      http.Response response;
+      response = await http.post(
+        'https://wyther-app.firebaseio.com/incidentes.json?auth=${_authUser.token}',
+        body: json.encode(data),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        print('#error: IncidentesModel@store - status code');
+        print('#error: {error}');
+        return false;
+      }
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      Incidente aux = incidente;
+      _incidentes.add(aux);
+      _isLoading = false;
+      notifyListeners();
+      print(responseData);
+      print('antes do true');
+      return true;
+
+    } catch (error) {
+      print('#error: IncidentesModel@store - catch');
+      print(error);
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
 
 }
 

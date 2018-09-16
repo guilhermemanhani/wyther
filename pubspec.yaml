@@ -32,6 +32,8 @@ flutter:
   assets:
    - assets/images/wyther-480x480.png
    - assets/images/wyther.png
+   - assets/images/flood.svg
+   - assets/images/flood32x32.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
