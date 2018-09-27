@@ -6,10 +6,11 @@ import 'package:Wyther/login/email.dart';
 import 'package:Wyther/scope-models/main.dart';
 
 class WytherApp extends StatelessWidget {
+  MainModel _model = MainModel();
   @override
   Widget build(BuildContext context) {
     return ScopedModel<MainModel>(
-        model: MainModel(),
+        model: _model,
         child: MaterialApp(
           title: 'Wyther',
           theme: ThemeData(
@@ -18,7 +19,7 @@ class WytherApp extends StatelessWidget {
           // home: HomePage(),
           routes: {
             '/': (BuildContext context) => LoginPage(),
-            '/home': (BuildContext context) => HomePage(),
+            '/home': (BuildContext context) => HomePage(_model),
             '/email': (BuildContext context) => EmailLoginPage(),
           },
           initialRoute: '/login',

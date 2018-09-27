@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Wyther/model/user.dart';
 import 'package:Wyther/model/incidente.dart';
 
@@ -37,11 +38,13 @@ class UserModel extends ConnectedModel {
     final Map<String, dynamic> responseData = json.decode(response.body);
     bool hasError = true;
     String message = 'Ops, alguma coisa deu errado!';
-    print(responseData);
+    // print(responseData);
     if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Cadastro realizado com sucesso!';
       _authUser = User(email: email, password: password, id: responseData['localId'], token: responseData['idToken']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', _authUser.token);
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'Este e-mail não possui cadastro.';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
@@ -70,11 +73,13 @@ class UserModel extends ConnectedModel {
     final Map<String, dynamic> responseData = json.decode(response.body);
     bool hasError = true;
     String message = 'Ops, alguma coisa deu errado!';
-    print(responseData);
+    
     if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Cadastro realizado com sucesso!';
       _authUser = User(email: email, password: password, id: responseData['localId'], token: responseData['idToken']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', _authUser.token);
     } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
       message = 'Este e-mail já esta cadastrado em nossa base de dados.';
     } else if (responseData['error']['message'] == 'WEAK_PASSWORD') {
@@ -97,19 +102,12 @@ class IncidentesModel extends ConnectedModel {
     return _incidentes;
   }
 
-  Future<bool> fetch() async {
+  Future<Null> fetch() async {
+    print('begin - IncidentesModel@fetch');
     _isLoading = true;
     notifyListeners();
 
     final List<Incidente> fetchedIncidentList = [];
-
-    fetchedIncidentList.add(new Incidente(descricao: 'blah1', latitute: -23.31656, longitude: -51.17082, userId: 'user1'));
-    fetchedIncidentList.add(new Incidente(descricao: 'blah2', latitute: -23.31650, longitude: -51.17082, userId: 'user3'));
-    fetchedIncidentList.add(new Incidente(descricao: 'blah3', latitute: -23.31550, longitude: -51.17082, userId: 'user2'));
-
-    _incidentes = fetchedIncidentList;
-    
-    return true;
 
     try {
 
@@ -124,21 +122,24 @@ class IncidentesModel extends ConnectedModel {
         notifyListeners();
         print('#error: IncidentesModel@fetch - status code');
         print('#error: {error}');
-        return false;
+        return;
       }
 
-      final List<Incidente> fetchedIncidentList = [];
+      // print(response.body);
+
       final Map<String, dynamic> incidenteListData = json.decode(response.body);
       if (incidenteListData == null) {
         _isLoading = false;
         notifyListeners();
-        return false;
+        return;
       }
 
+      // print(incidenteListData);
+      
       incidenteListData.forEach((String productId, dynamic productData) {
         final Incidente incidente = Incidente(
             descricao: productData['descricao'],
-            latitute: productData['latitute'],
+            latitude: productData['latitude'],
             longitude: productData['longitude'],
             userId: productData['userId']);
         fetchedIncidentList.add(incidente);
@@ -147,14 +148,14 @@ class IncidentesModel extends ConnectedModel {
       _incidentes = fetchedIncidentList;
       _isLoading = false;
       notifyListeners();
-      return true;
+      return;
 
     } catch (error) {
       print('#error: IncidentesModel@fetch - catch');
       print(error);
       _isLoading = false;
       notifyListeners();
-      return false;
+      return;
     }
   }
 
@@ -163,7 +164,7 @@ class IncidentesModel extends ConnectedModel {
     notifyListeners();
     final Map<String, dynamic> data = {
       'descricao': incidente.descricao,
-      'latitude': incidente.latitute,
+      'latitude': incidente.latitude,
       'longitude': incidente.longitude,
       'userId': _authUser.id,
       'returnSecureToken': true
@@ -203,7 +204,6 @@ class IncidentesModel extends ConnectedModel {
       return false;
     }
   }
-
 
 }
 

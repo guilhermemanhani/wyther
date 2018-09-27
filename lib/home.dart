@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
@@ -7,6 +8,10 @@ import 'package:Wyther/scope-models/main.dart';
 import 'package:Wyther/model/incidente.dart';
 
 class HomePage extends StatefulWidget {
+  final MainModel _model;
+
+  HomePage(this._model);
+
   @override
   _HomePageState createState() => new _HomePageState();
 }
@@ -24,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
     if (await model.store(new Incidente(
         descricao: _formData['descricao'],
-        latitute: _currentLocation['latitude'],
+        latitude: _currentLocation['latitude'],
         longitude: _currentLocation['longitude'],
         userId: model.userId))) {
       showDialog(
@@ -114,18 +119,25 @@ class _HomePageState extends State<HomePage> {
     try {
       final currentLocation = await location.getLocation();
       _currentLocation = currentLocation;
-      print(_currentLocation);
+      // print(_currentLocation);
     } on Exception catch (e) {
       print('Could not describe object: $e');
     }
   }
 
+  void _loadData() async {
+    await widget._model.fetch();
+
+    print('#tamanho:' + widget._model.incidentes.length.toString());
+  }
+
   @override
   void initState() {
-    super.initState();
-
     _getCurrentLocation();
-    
+
+    _loadData();
+
+    super.initState();
   }
 
   @override
@@ -225,8 +237,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMapBody(MainModel model) {
-    model.fetch();
-
+    
     return new FlutterMap(
       options: MapOptions(
         center: _currentLocation != null
@@ -240,55 +251,42 @@ class _HomePageState extends State<HomePage> {
           urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           subdomains: ['a', 'b', 'c'],
         ),
-        new MarkerLayerOptions(markers: _buildMarkersList(model))
+        MarkerLayerOptions(markers: _buildMarkersList(widget._model))
       ],
     );
   }
 
-  List<Marker> _buildMarkersList(MainModel model){
+  List<Marker> _buildMarkersList(MainModel model) {
+    
     final incidentes = model.incidentes;
 
     List<Marker> markers = [];
 
-    print('before');
+    if(incidentes == null){
+      return markers;
+    }
+    
     incidentes.forEach((Incidente incidente) {
-      print(incidente.descricao);
       markers.add(new Marker(
-              width: 42.0,
-              height: 42.0,
-              point: LatLng(incidente.latitute, incidente.longitude),
-              builder: (context) => new Container(
-                    child: new IconButton(
-                      icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
-                      // icon: new Image.asset("assets/images/flood32x32.png"),
-                      color: Colors.blue,
-                      iconSize: 45.0,
-                      onPressed: () {
-                        print('click no ponto!');
-                      },
-                    ),
-                  )
+            width: 42.0,
+            height: 42.0,
+            point: LatLng(incidente.latitude, incidente.longitude),
+            builder: (context) => new Container(
+                  child: new IconButton(
+                    icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
+                    // icon: new Image.asset("assets/images/flood32x32.png"),
+                    color: Colors.blue,
+                    iconSize: 45.0,
+                    onPressed: () {
+                      print('click no ponto!');
+                    },
+                  ),
                 )
-              );
+              )
+            );
     });
-    print('after');
-    return markers;
-    return [new Marker(
-              width: 42.0,
-              height: 42.0,
-              point: LatLng(-23.31656, -51.17082),
-              builder: (context) => new Container(
-                    child: new IconButton(
-                      icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
-                      // icon: new Image.asset("assets/images/flood32x32.png"),
-                      color: Colors.blue,
-                      iconSize: 45.0,
-                      onPressed: () {
-                        print('click no ponto!');
-                      },
-                    ),
-                  )
-                )];
+    
+    return markers;    
   }
 
   List<Card> _buildGridCards(int count) {
