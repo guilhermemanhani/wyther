@@ -157,13 +157,15 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {},
                 ),
                 ListTile(
+                  leading: Icon(Icons.info),
                   title: Text('Sobre'),
                   onTap: () {},
                 ),
                 ListTile(
+                  leading: Icon(Icons.exit_to_app),
                   title: Text('Sair'),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.popAndPushNamed(context, '/');
                   },
                 )
               ],
