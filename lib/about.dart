@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:Wyther/home.dart';
-import 'package:Wyther/login.dart';
-import 'package:Wyther/login/email.dart';
-import 'package:Wyther/scope-models/main.dart';
-
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

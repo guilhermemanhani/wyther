@@ -296,33 +296,4 @@ class _HomePageState extends State<HomePage> {
     return markers;
   }
 
-  List<Card> _buildGridCards(int count) {
-    List<Card> cards = List.generate(
-      count,
-      (int index) => Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                AspectRatio(
-                  aspectRatio: 18.0 / 11.0,
-                  child: Image.asset('images/assets/wyther.png'),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text('Title'),
-                      SizedBox(height: 8.0),
-                      Text('Secondary Text'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-    );
-
-    return cards;
-  }
 }
