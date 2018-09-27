@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
@@ -153,13 +152,16 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Opções'),
                 ),
                 ListTile(
+                  leading: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
                   title: Text('Pontos de alagamento'),
                   onTap: () {},
                 ),
                 ListTile(
                   leading: Icon(Icons.info),
                   title: Text('Sobre'),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.popAndPushNamed(context, '/info');
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.exit_to_app),

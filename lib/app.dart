@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:Wyther/about.dart';
 import 'package:Wyther/home.dart';
 import 'package:Wyther/login.dart';
 import 'package:Wyther/login/email.dart';
@@ -21,6 +22,7 @@ class WytherApp extends StatelessWidget {
             '/': (BuildContext context) => LoginPage(),
             '/home': (BuildContext context) => HomePage(_model),
             '/email': (BuildContext context) => EmailLoginPage(),
+            '/info': (BuildContext context) => AboutPage(),
           },
           initialRoute: '/login',
           onGenerateRoute: _getRoute,
