@@ -24,90 +24,96 @@ class _HomePageState extends State<HomePage> {
 
   void _submitForm(MainModel model) async {
     _getCurrentLocation();
-    _formKey.currentState.save();
 
-    if (await model.store(new Incidente(
-        descricao: _formData['descricao'],
-        latitude: _currentLocation['latitude'],
-        longitude: _currentLocation['longitude'],
-        userId: model.userId))) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Cadastro'),
-              content: new SingleChildScrollView(
-                child: new ListBody(
-                  children: <Widget>[
-                    new Icon(
-                      Icons.check,
-                      semanticLabel: 'menu',
-                      color: Colors.green,
-                      size: 52.0,
-                    ),
-                    new Text(
-                      'ok!',
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
+      print(_currentLocation);
+      if (await model.store(new Incidente(
+          descricao: _formData['descricao'],
+          latitude: _currentLocation['latitude'],
+          longitude: _currentLocation['longitude'],
+          userId: model.userId))) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Cadastro'),
+                content: new SingleChildScrollView(
+                  child: new ListBody(
+                    children: <Widget>[
+                      new Icon(
+                        Icons.check,
+                        semanticLabel: 'menu',
+                        color: Colors.green,
+                        size: 52.0,
+                      ),
+                      new Text(
+                        'Ponto de chuva cadastrado com sucesso!',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  new FlatButton(
+                    child: new Text(
+                      'Ok',
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: 20.0,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text(
-                    'Ok',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                ],
+              );
+            });
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Cadastro'),
+                content: new SingleChildScrollView(
+                  child: new ListBody(
+                    children: <Widget>[
+                      new Icon(
+                        Icons.error,
+                        semanticLabel: 'error',
+                        color: Colors.red,
+                        size: 52.0,
+                      ),
+                      new Text(
+                        'Erro',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            );
-          });
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Cadastro'),
-              content: new SingleChildScrollView(
-                child: new ListBody(
-                  children: <Widget>[
-                    new Icon(
-                      Icons.error,
-                      semanticLabel: 'error',
-                      color: Colors.red,
-                      size: 52.0,
-                    ),
-                    new Text(
-                      'Erro',
+                actions: <Widget>[
+                  new FlatButton(
+                    child: new Text(
+                      'Ok',
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: 20.0,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text(
-                    'Ok',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          });
+                ],
+              );
+            });
+      }
     }
   }
 
@@ -192,14 +198,15 @@ class _HomePageState extends State<HomePage> {
                         key: _formKey,
                         child: Column(
                           children: <Widget>[
-                            SizedBox(height: 10.0),
+                            SizedBox(height: 16.0),
                             Center(
                               child: Text('Reportar alagamento',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0)),
                             ),
                             new Padding(
-                              padding: new EdgeInsets.all(8.0),
+                              padding: new EdgeInsets.all(12.0),
                               child: TextFormField(
                                 controller: _descricaoController,
                                 decoration:
@@ -241,7 +248,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMapBody(MainModel model) {
-    
     return new FlutterMap(
       options: MapOptions(
         center: _currentLocation != null
@@ -261,36 +267,33 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Marker> _buildMarkersList(MainModel model) {
-    
     final incidentes = model.incidentes;
 
     List<Marker> markers = [];
 
-    if(incidentes == null){
+    if (incidentes == null) {
       return markers;
     }
-    
+
     incidentes.forEach((Incidente incidente) {
       markers.add(new Marker(
-            width: 42.0,
-            height: 42.0,
-            point: LatLng(incidente.latitude, incidente.longitude),
-            builder: (context) => new Container(
-                  child: new IconButton(
-                    icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
-                    // icon: new Image.asset("assets/images/flood32x32.png"),
-                    color: Colors.blue,
-                    iconSize: 45.0,
-                    onPressed: () {
-                      print('click no ponto!');
-                    },
-                  ),
-                )
-              )
-            );
+          width: 42.0,
+          height: 42.0,
+          point: LatLng(incidente.latitude, incidente.longitude),
+          builder: (context) => new Container(
+                child: new IconButton(
+                  icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
+                  // icon: new Image.asset("assets/images/flood32x32.png"),
+                  color: Colors.blue,
+                  iconSize: 45.0,
+                  onPressed: () {
+                    print('click no ponto!');
+                  },
+                ),
+              )));
     });
-    
-    return markers;    
+
+    return markers;
   }
 
   List<Card> _buildGridCards(int count) {

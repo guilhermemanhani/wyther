@@ -162,6 +162,7 @@ class IncidentesModel extends ConnectedModel {
   Future<bool> store(Incidente incidente) async {
     _isLoading = true;
     notifyListeners();
+    
     final Map<String, dynamic> data = {
       'descricao': incidente.descricao,
       'latitude': incidente.latitude,
