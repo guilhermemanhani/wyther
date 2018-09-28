@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
           latitude: _currentLocation['latitude'],
           longitude: _currentLocation['longitude'],
           userId: model.userId))) {
+            
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                         size: 52.0,
                       ),
                       new Text(
-                        'Ponto de chuva cadastrado com sucesso!',
+                        'Ponto de enchente cadastrado com sucesso!',
                         style: TextStyle(
                           fontSize: 14.0,
                         ),
@@ -66,6 +67,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     onPressed: () {
+                      
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },
