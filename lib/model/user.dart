@@ -6,6 +6,10 @@ class User {
   final String password;
   final String token;
 
-  User({@required this.id, @required this.email, @required this.password, @required this.token});
-
+  User({
+      @required this.id,
+      @required this.email,
+      @required this.password,
+      @required this.token
+      });
 }

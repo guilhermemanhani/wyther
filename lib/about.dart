@@ -1,6 +1,12 @@
+import 'package:Wyther/scope-models/validate.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'home.dart';
 
 class AboutPage extends StatelessWidget {
+
+  static const routeName = '/info';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +21,7 @@ class AboutPage extends StatelessWidget {
                 leading: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
                 title: Text('Pontos de alagamento'),
                 onTap: () {
-                  Navigator.popAndPushNamed(context, '/home');
+                  Navigator.of(context).pushNamed(HomePage.routeName);
                 },
               ),
               ListTile(
@@ -26,7 +32,9 @@ class AboutPage extends StatelessWidget {
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Sair'),
                 onTap: () {
-                  Navigator.popAndPushNamed(context, '/');
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacementNamed('/');
+                  Provider.of<Validate>(context, listen: false).logout();
                 },
               )
             ],

@@ -1,15 +1,19 @@
+import 'package:Wyther/scope-models/connected_models.dart';
+import 'package:Wyther/scope-models/validate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart' as geoloc;
-import 'package:scoped_model/scoped_model.dart';
-import 'package:Wyther/scope-models/main.dart';
+import 'package:provider/provider.dart';
+//import 'package:scoped_model/scoped_model.dart';
+//import 'package:Wyther/scope-models/main.dart';
 import 'package:Wyther/model/incidente.dart';
 
 class HomePage extends StatefulWidget {
-  final MainModel _model;
-
-  HomePage(this._model);
+  //final Validate _model;
+  static const routeName = '/home';
+  //HomePage(this._model);
+  final List<Incidente> loadedIncidente = [];
 
   @override
   _HomePageState createState() => new _HomePageState();
@@ -22,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   final Map<String, dynamic> _formData = {'descricao': null};
 
-  void _submitForm(MainModel model) async {
+  void _submitForm(Incidentes model) async {
     _getCurrentLocation();
 
     if (_formKey.currentState.validate()) {
@@ -33,8 +37,8 @@ class _HomePageState extends State<HomePage> {
           descricao: _formData['descricao'],
           latitude: _currentLocation['latitude'],
           longitude: _currentLocation['longitude'],
-          userId: model.userId))) {
-            
+          userId: model.userId,
+          token: model.token))) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -67,7 +71,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     onPressed: () {
-                      
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },
@@ -132,124 +135,148 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _loadData() async {
-    await widget._model.fetch();
+void _loadData() async {
 
-    print('#tamanho:' + widget._model.incidentes.length.toString());
+  final _incidentes = Provider.of<Incidentes>(
+    context,
+    listen: false,
+  );
+
+    await _incidentes.fetch(_incidentes.token);
+
+    print('#tamanho:' + _incidentes.incidentes.toString());
   }
+  // void _loadData() async {
+  //   await widget._incidentes.fetch();
+
+  //   print('#tamanho:' + widget._incidentes.incidentes.toString());
+  // }
 
   @override
   void initState() {
     _getCurrentLocation();
 
-    _loadData();
+   // _loadData();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant(
-      builder: (BuildContext context, Widget child, MainModel model) {
-        return Scaffold(
-          drawer: Drawer(
-            child: Column(
-              children: <Widget>[
-                AppBar(
-                  automaticallyImplyLeading: false,
-                  title: Text('Opções'),
-                ),
-                ListTile(
-                  leading: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
-                  title: Text('Pontos de alagamento'),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: Icon(Icons.info),
-                  title: Text('Sobre'),
-                  onTap: () {
-                    Navigator.popAndPushNamed(context, '/info');
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.exit_to_app),
-                  title: Text('Sair'),
-                  onTap: () {
-                    Navigator.popAndPushNamed(context, '/');
-                  },
-                )
-              ],
-            ),
-          ),
-          appBar: AppBar(
-            title: Text('Wyther'),
-            actions: <Widget>[],
-          ),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(
-              Icons.add_location,
-              semanticLabel: 'menu',
-              color: Colors.white,
-              size: 36.0,
-            ),
-            onPressed: () {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return new Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(height: 16.0),
-                            Center(
-                              child: Text('Reportar alagamento',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.0)),
-                            ),
-                            new Padding(
-                              padding: new EdgeInsets.all(12.0),
-                              child: TextFormField(
-                                controller: _descricaoController,
-                                decoration:
-                                    InputDecoration(labelText: 'Descrição'),
-                                maxLines: 4,
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Escreva alguma descrição';
-                                  }
-                                },
-                                onSaved: (String value) {
-                                  _formData['descricao'] = value;
-                                },
-                              ),
-                            ),
-                            new RaisedButton(
-                              child: Text('Reportar'),
-                              onPressed: () {
-                                _submitForm(model);
-                                // print('Incidente reportado!');
-                              },
-                            ),
-                          ],
-                        ));
-                  });
-            },
-          ),
-          body: _buildMapBody(model),
-
-          // GridView.count(
-          //   crossAxisCount: 2,
-          //   padding: EdgeInsets.all(16.0),
-          //   childAspectRatio: 8.0 / 9.0,
-          //   children: _buildGridCards(10),
-          // ),
-        );
-      },
+    //print(Validade._userId);
+    // final productId = ModalRoute.of(context).settings.arguments as String;
+    final incidente = Provider.of<Incidentes>(
+      context,
+      listen: false,
     );
+    //return ScopedModelDescendant(
+    //builder: (BuildContext context, Widget child, Validate model) {
+    return Scaffold(
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            AppBar(
+              automaticallyImplyLeading: false,
+              title: Text('Opções'),
+            ),
+            ListTile(
+              leading: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
+              title: Text('Pontos de alagamento'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.info),
+              title: Text('Sobre'),
+              onTap: () {
+                Navigator.popAndPushNamed(context, '/info');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Sair'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/');
+                Provider.of<Validate>(context, listen: false).logout();
+              },
+            )
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        title: Text('Wyther'),
+        actions: <Widget>[],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add_location,
+          semanticLabel: 'menu',
+          color: Colors.white,
+          size: 36.0,
+        ),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return new Form(
+                key: _formKey,
+                child: ListView(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        SizedBox(height: 16.0),
+                        Center(
+                          child: Text('Reportar alagamento',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18.0)),
+                        ),
+                        new Padding(
+                          padding: new EdgeInsets.all(12.0),
+                          child: TextFormField(
+                            keyboardType: TextInputType.multiline,
+                            controller: _descricaoController,
+                            decoration: InputDecoration(labelText: 'Descrição'),
+                            maxLines: 4,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Escreva alguma descrição';
+                              }
+                            },
+                            onSaved: (String value) {
+                              _formData['descricao'] = value;
+                            },
+                          ),
+                        ),
+                        new RaisedButton(
+                          child: Text('Reportar'),
+                          onPressed: () {
+                            _submitForm(incidente);
+                            // print('Incidente reportado!');
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+      body: _buildMapBody(incidente),
+
+      // GridView.count(
+      //   crossAxisCount: 2,
+      //   padding: EdgeInsets.all(16.0),
+      //   childAspectRatio: 8.0 / 9.0,
+      //   children: _buildGridCards(10),
+      // ),
+    );
+    //},
+    //);
   }
 
-  Widget _buildMapBody(MainModel model) {
+  Widget _buildMapBody(Incidentes _incidentes) {
     return new FlutterMap(
       options: MapOptions(
         center: _currentLocation != null
@@ -263,13 +290,15 @@ class _HomePageState extends State<HomePage> {
           urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           subdomains: ['a', 'b', 'c'],
         ),
-        MarkerLayerOptions(markers: _buildMarkersList(widget._model))
+        MarkerLayerOptions(markers: _buildMarkersList(_incidentes))
       ],
     );
   }
 
-  List<Marker> _buildMarkersList(MainModel model) {
+  List<Marker> _buildMarkersList(Incidentes model) {
     final incidentes = model.incidentes;
+
+    model.fetch(model.token);
 
     List<Marker> markers = [];
 
@@ -277,11 +306,11 @@ class _HomePageState extends State<HomePage> {
       return markers;
     }
 
-    incidentes.forEach((Incidente incidente) {
+    incidentes.forEach((incidentes) {
       markers.add(new Marker(
           width: 42.0,
           height: 42.0,
-          point: LatLng(incidente.latitude, incidente.longitude),
+          point: LatLng(incidentes.latitude, incidentes.longitude),
           builder: (context) => new Container(
                 child: new IconButton(
                   icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
@@ -297,5 +326,4 @@ class _HomePageState extends State<HomePage> {
 
     return markers;
   }
-
 }
