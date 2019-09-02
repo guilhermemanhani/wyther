@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, double> _currentLocation;
   final _formKey = GlobalKey<FormState>();
   final _descricaoController = TextEditingController();
+  Incidentes dataIncidentes;
 
   final Map<String, dynamic> _formData = {'descricao': null};
 
@@ -38,6 +39,7 @@ class _HomePageState extends State<HomePage> {
           latitude: _currentLocation['latitude'],
           longitude: _currentLocation['longitude'],
           userId: model.userId,
+          
           token: model.token))) {
         showDialog(
             context: context,
@@ -135,7 +137,21 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-void _loadData() async {
+// void _loadData() async {
+
+//   final _incidentes = Provider.of<Incidentes>(
+//     context,
+//     listen: false,
+//   );
+
+//     await _incidentes.fetch(_incidentes.token);
+
+//     this.dataIncidentes = _incidentes;
+
+//     print('#tamanho:' + _incidentes.incidentes.toString());
+//   }
+
+  Future<List<Incidente>> _loadIncidentes() async {
 
   final _incidentes = Provider.of<Incidentes>(
     context,
@@ -144,7 +160,7 @@ void _loadData() async {
 
     await _incidentes.fetch(_incidentes.token);
 
-    print('#tamanho:' + _incidentes.incidentes.toString());
+    return _incidentes.incidentes;
   }
   // void _loadData() async {
   //   await widget._incidentes.fetch();
@@ -231,9 +247,9 @@ void _loadData() async {
                                   fontWeight: FontWeight.bold, fontSize: 18.0)),
                         ),
                         new Padding(
-                          padding: new EdgeInsets.all(12.0),
+                          padding: new EdgeInsets.all(10.0),
                           child: TextFormField(
-                            keyboardType: TextInputType.multiline,
+                            keyboardType: TextInputType.text,
                             controller: _descricaoController,
                             decoration: InputDecoration(labelText: 'Descrição'),
                             maxLines: 4,
@@ -263,7 +279,7 @@ void _loadData() async {
           );
         },
       ),
-      body: _buildMapBody(incidente),
+      body: _buildMapBody(),
 
       // GridView.count(
       //   crossAxisCount: 2,
@@ -276,7 +292,7 @@ void _loadData() async {
     //);
   }
 
-  Widget _buildMapBody(Incidentes _incidentes) {
+  Widget _buildMapBody() {
     return new FlutterMap(
       options: MapOptions(
         center: _currentLocation != null
@@ -290,27 +306,24 @@ void _loadData() async {
           urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           subdomains: ['a', 'b', 'c'],
         ),
-        MarkerLayerOptions(markers: _buildMarkersList(_incidentes))
+        MarkerLayerOptions(markers: _buildMarkersList())
       ],
     );
   }
 
-  List<Marker> _buildMarkersList(Incidentes model) {
-    final incidentes = model.incidentes;
-
-    model.fetch(model.token);
+  List<Marker> _buildMarkersList(){
+    
+    var incidentes = _loadIncidentes();
 
     List<Marker> markers = [];
 
-    if (incidentes == null) {
-      return markers;
-    }
-
-    incidentes.forEach((incidentes) {
-      markers.add(new Marker(
+    incidentes.then((lista) { 
+      // print(value); 
+      lista.forEach((incidente) {
+        markers.add(new Marker(
           width: 42.0,
           height: 42.0,
-          point: LatLng(incidentes.latitude, incidentes.longitude),
+          point: LatLng(incidente.latitude, incidente.longitude),
           builder: (context) => new Container(
                 child: new IconButton(
                   icon: Icon(IconData(0xe802, fontFamily: 'MyFlutterApp')),
@@ -321,9 +334,15 @@ void _loadData() async {
                     print('click no ponto!');
                   },
                 ),
-              )));
-    });
-
+              )));    
+      });
+      print('@after lista.forEach ' + markers.length.toString());      
+    },
+      onError: (e) { print('error'); 
+    });  
+    
+    print('@markers ' + markers.length.toString());
+    
     return markers;
   }
 }

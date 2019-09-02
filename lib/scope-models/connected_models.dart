@@ -45,7 +45,7 @@ class Incidentes extends ChangeNotifier {
   Future<void> fetch(String _token) async {
     print('begin - IncidentesModel@fetch');
     // _isLoading = true;
-    notifyListeners();
+    // notifyListeners();
 
     //final List<Incidente> fetchedIncidentList = [];
 
@@ -78,7 +78,7 @@ class Incidentes extends ChangeNotifier {
       final List<Incidente> loadedIncidentes = [];
       incidenteListData.forEach((prodId, productData){
         loadedIncidentes.add(Incidente(
-          descricao: productData['descricao'],
+            descricao: productData['descricao'],
             latitude: productData['latitude'],
             longitude: productData['longitude'],
             userId: productData['userId'],
